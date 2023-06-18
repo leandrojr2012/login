@@ -1,17 +1,17 @@
 const loginUsuario = require('../service/usuarioLogar')
 const cadastrarUsuario = require('../service/usuarioCadastrar')
-//const {erros} = require('../service/usuarioLogar')
 const Jwt = require('jsonwebtoken')
 const db = require('../db/_dataBase')
 let iduser
+let error_msg
 
 
-exports.cadastro = (req, res) => {
-    res.render('cadastrar')
+exports.cadastro = (req, res) => {  
+    res.render('cadastrar', {error_msg})
 }
 
-exports.login = (req, res) => {    
-    res.render('logar'/*, {erros:erros}*/)
+exports.login = (req, res) => {
+    res.render('logar', {error_msg}/*, {erros}*/)
 }
 
 exports.loginOut = (req,res) => { 
@@ -21,29 +21,28 @@ res.send('Obrigado! Visite novamente')
 
 exports.lista = async (req, res) => {
     const rows = await db.select('nome')
-    .from('usuario')
-    .where({'idusuario':iduser})
+    .from('cadastro')
+    .where({'idcadastro':iduser})
     res.render('listar', {rows})
-    console.log(rows)
 }
 
 exports.postCadastro = (req, res) =>{
     
     const dados = req.body
     const nome = dados.nome
+    const sobrenome = dados.sobrenome
     const email = dados.email
+    const nascimento = dados.nascimento
     const senha = dados.senha
+    const confSenha = dados.confirmaSenha
 
-    cadastrarUsuario(nome,  email, senha)
+    cadastrarUsuario(nome, sobrenome, email, nascimento, senha, confSenha)
     .then(()=>{
-        return res.render('cadastrar')
-    }).catch((err) => {console.log(err)
-        return  res.status(400).json({
-            erro:true,
-            mensagem:err
-        })
+        return res.redirect('/') 
+    }).catch((erros) => {console.log(erros)
+        error_msg = erros
+        return res.redirect('cadastrar')
     })
-
 }
 
 exports.postLogar = (req, res) => {
@@ -53,15 +52,16 @@ exports.postLogar = (req, res) => {
 
     loginUsuario(emailUser, senha)  
       .then(jwt =>{
-        const id = jwt.slice(-1)
+        let id = jwt.slice(-2)
+        console.log(id)
         iduser = Number(id)
-        jwt = jwt.slice(0, jwt.length -1)
+        jwt = jwt.slice(0, jwt.length -2)
+        console.log(jwt)
         req.session.token = jwt
         res.redirect('/')        
-    }).catch((err) => {console.log(err)
-        return  res.status(400).json({
-            erro:true,
-            mensagem:err
-        })
+    }).catch((erros) => {console.log(erros)
+        error_msg = erros
+        return  res.redirect('login')
+       
     })
 }

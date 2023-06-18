@@ -6,8 +6,8 @@ exports.index = (req, res) => {
 }
 
 /*exports.index = async (req, res) => {
-    const rows = await db.select('idusuario', 'nome')
-    .from('usuario')
-    .where({'idusuario':req.params.id})
-res.render('index', {rows:rows, eAdmin: eAdmin})
+    const rows = await db.select('idcadastro', 'nome')
+    .from('cadastro')
+    .where({'idcadastro':req.params.id})
+res.render('indexLogin', {rows:rows})
 }*/

@@ -1,37 +1,27 @@
 const db = require('../db/_dataBase')
 const bcryptjs = require('bcryptjs')
-//const flash = require('connect-flash')
+const flash = require('connect-flash')
 
 
-//let erros = []
-async function cadastrarUsuario(nome, email, senha){
+async function cadastrarUsuario(nome, sobrenome, email,  nascimento, senha, confSenha){
     return new Promise(async ( resolve, reject) =>{
 
-        const nomeIgual = await db('usuario').where({nome})
-        const emailIgual = await db('usuario').where({email})
+        const emailIgual = await db('cadastro').where({email})
 
-        if(nome == "" || email == "" || senha == ""){
+        if(nome == '' || sobrenome == '' || email == '' || nascimento == '' || senha == '' || confSenha == ''){
             reject('Nenhum campo pode ficar em branco!')
-            //erros.push('Nenhum campo pode ficar em branco!')
             return;
-        }
-        else if(nomeIgual.length > 0){
-            reject('Nome existente!')
-        }
-        else if(emailIgual.length > 0){
+        }else if(emailIgual.length > 0){
             reject('Email existente!')
+            return
+        }else if(senha != confSenha){
+            reject('Senhas nao conferem!')
+            return
         }
-        /*else if(erros.length > 0){ 
-        req.flash('erros', erros)
-        req.session.save(function(){
-           return res.redirect('back')
-        })
-        return
-        }*/
         else{   
             const senhas = bcryptjs.hashSync(senha, 8)
-            await db.insert({nome, email, senha:senhas})
-            .into("usuario")
+            await db.insert({nome, sobrenome, email, nascimento, senha:senhas})
+            .into("cadastro")
             .then (data =>{
                 resolve()
             }).catch(err => {
@@ -49,6 +39,7 @@ if(erros.length > 0 ){
 //console.log(Object.keys(erros).length)
 
 //module.exports = erros
+exports.erros
 
 module.exports = cadastrarUsuario
 

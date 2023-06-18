@@ -5,6 +5,7 @@ const usuarioController = require('./src/controllers/usuarioController')
 const eAdmin = require('./src/middleware/auth')
 
 route.get('/', homeController.index)
+route.get('/logado/:id', homeController.index)
 route.get('/cadastrar', usuarioController.cadastro)
 route.get('/login', usuarioController.login)
 route.get( '/loginOut', usuarioController.loginOut)

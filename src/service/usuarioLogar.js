@@ -6,11 +6,12 @@ const SECRET = 'leandro'
 async function loginUsuario(emailUser, senha){
     return new Promise(async ( resolve, reject) =>{
 
-        const user = await db .select('idusuario', 'nome', 'email', 'senha').from('usuario').where({email: emailUser})
+        const user = await db.select('idcadastro', 'nome', 'email', 'senha').from('cadastro').where({email: emailUser})
 
         let emailBd  
         let senhaBd
         let idBd 
+        let data = new Date()
 
         for(let i=0; i<user.length; i++){
             if(user[i].email){
@@ -25,8 +26,8 @@ async function loginUsuario(emailUser, senha){
         }
 
         for(let i=0; i<user.length; i++){
-            if(user[i].idusuario){
-                idBd = user[i].idusuario
+            if(user[i].idcadastro){
+                idBd = user[i].idcadastro
             }
         }
 
@@ -40,11 +41,18 @@ async function loginUsuario(emailUser, senha){
         else if(!(bcryptjs.compareSync(senha, senhaBd))){
             reject('Usuario ou Senha incorreto! senha incorreta')
         }
-        else{  
+        else{            
             let token = jwt.sign({idBd}, SECRET, {
-                expiresIn: 60
-            }) 
-            resolve(token + idBd)  
+            expiresIn: 60
+            })
+            await db.insert({idBd, data})
+            .into("login")
+            .then (data =>{
+               resolve(token + idBd)  
+            }).catch(err => {
+               console.log(err)
+            })
+            console.log(token + idBd)
         }
     })
 }
