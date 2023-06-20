@@ -2,7 +2,6 @@ const loginUsuario = require('../service/usuarioLogar')
 const cadastrarUsuario = require('../service/usuarioCadastrar')
 const Jwt = require('jsonwebtoken')
 const db = require('../db/_dataBase')
-let iduser
 let error_msg
 
 
@@ -22,8 +21,9 @@ res.send('Obrigado! Visite novamente')
 exports.lista = async (req, res) => {
     const rows = await db.select('nome')
     .from('cadastro')
-    .where({'idcadastro':iduser})
-    res.render('listar', {rows})
+    .where({'idcadastro':res.locals.usuarioLogado})
+    res.render('listar', {rows, usuarioLogado: res.locals.usuarioLogado ?? false
+    })
 }
 
 exports.postCadastro = (req, res) =>{
@@ -52,11 +52,6 @@ exports.postLogar = (req, res) => {
 
     loginUsuario(emailUser, senha)  
       .then(jwt =>{
-        let id = jwt.slice(-2)
-        console.log(id)
-        iduser = Number(id)
-        jwt = jwt.slice(0, jwt.length -2)
-        console.log(jwt)
         req.session.token = jwt
         res.redirect('/')        
     }).catch((erros) => {console.log(erros)

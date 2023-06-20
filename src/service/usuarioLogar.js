@@ -48,11 +48,10 @@ async function loginUsuario(emailUser, senha){
             await db.insert({idBd, data})
             .into("login")
             .then (data =>{
-               resolve(token + idBd)  
+               resolve(token)  
             }).catch(err => {
                console.log(err)
             })
-            console.log(token + idBd)
         }
     })
 }

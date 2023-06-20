@@ -8,11 +8,12 @@
     <title>Lista</title>
 </head>
 <body>
-    <%- include('./partials/_navbar.ejs'); %>
+    <%- include('./partials/_navbar.ejs, {usuarioLogado:'hhhhh'}'); %>
     <h1>Lista de usuario</h1>
     <% for(let i in rows){ %>
     <div>
         <p>usuario: <h5><%= rows[i].nome %></h5> </p> 
+        <p><%= usuarioLogado %></p>
     </div>
     <% } %>
 </body>
