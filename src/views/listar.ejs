@@ -8,7 +8,7 @@
     <title>Lista</title>
 </head>
 <body>
-    <%- include('./partials/_navbar.ejs, {usuarioLogado:'hhhhh'}'); %>
+    <%- include('./partials/_navbar.ejs', {usuarioLogado}); %>
     <h1>Lista de usuario</h1>
     <% for(let i in rows){ %>
     <div>
